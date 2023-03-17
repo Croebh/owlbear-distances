@@ -18,8 +18,8 @@ export function setupContextMenu() {
 
       OBR.popover.open({
         id: `${ID}/show-distances`,
-        height: 120,
-        width: 200,
+        height: 130,
+        width: 300,
         url: "/show-distances.html",
         anchorElementId: elementId,
         anchorOrigin: {
