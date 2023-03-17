@@ -14,7 +14,6 @@ async function getDistances() {
 
     const selection = await OBR.player.getSelection()
     if (selection) {
-        console.log(selection)
         const items = await OBR.scene.items.getItems(selection);
         for (const item of items) {
             let name_1 = item.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
@@ -43,11 +42,8 @@ async function getDistances() {
             })
             text = text + `</table>`
 
-            // console.log(text);
             document.querySelector("#app").innerHTML = `
-                <div>
-                    ${text}
-                </div>
+                ${text}
             `;
         }
     }
