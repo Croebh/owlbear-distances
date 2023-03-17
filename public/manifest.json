@@ -1,13 +1,13 @@
 {
-    "name": "Character Distances",
-    "version": "1.0.1",
+    "name": "Character Distances [DEV]",
+    "version": "1.0.2",
     "manifest_version": 1,
     "action": {
       "title": "Character Distances",
       "icon": "/public/distances.svg",
       "popover": "/",
-      "height": 600,
-      "width": 400
+      "height": 100,
+      "width": 100
     },
     "description": "Adds a basic context button to see the distances to other characters"
   }

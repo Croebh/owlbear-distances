@@ -29,8 +29,11 @@ async function getDistances() {
                     let dist = Math.sqrt((item.position.x - character.position.x) ** 2 + (item.position.y - character.position.y) ** 2);
                     dist = dist * scale.parsed.multiplier
                     dist = dist / dpi
-                    dist = Math.round(dist)
-                    distances.push([name_2, dist])
+                    dist = Math.round(dist / 5) * 5
+                    
+                    let odd_size = character.scale.x > 1 | character.scale.y > 1
+
+                    distances.push([name_2, dist, odd_size])
                     
                 }
             });
@@ -38,7 +41,7 @@ async function getDistances() {
                 return a[1]-b[1]
             })
             distances.forEach(dist => {
-                text = text + `<tr><td><strong>${dist[0]}</strong></td><td>${dist[1]} ${scale.parsed.unit}. away</td></tr>`
+                text = text + `<tr><td><strong>${dist[0]}</strong></td><td>${dist[2] ? '~' : ''}${dist[1]} ${scale.parsed.unit}. away</td></tr>`
             })
             text = text + `</table>`
 
