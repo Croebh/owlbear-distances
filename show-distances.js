@@ -26,13 +26,26 @@ async function getDistances() {
                 if (character.id != item.id) {
                     let name_2 = character.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
                     
-                    let dist = Math.sqrt((item.position.x - character.position.x) ** 2 + (item.position.y - character.position.y) ** 2);
+                    // Calculate the closest 1x1 square for each token
+                    const closestSquare1 = {
+                        x: Math.round((item.position.x - (character.scale.x-1 / 2)) / scale.parsed.multiplier) * scale.parsed.multiplier + (character.scale.x-1 / 2),
+                        y: Math.round((item.position.y - (character.scale.y-1 / 2)) / scale.parsed.multiplier) * scale.parsed.multiplier + (character.scale.y-1 / 2)
+                    };
+                    const closestSquare2 = {
+                        x: Math.round((character.position.x - (item.scale.x-1 / 2)) / scale.parsed.multiplier) * scale.parsed.multiplier + (item.scale.x-1 / 2),
+                        y: Math.round((character.position.y - (item.scale.y-1 / 2)) / scale.parsed.multiplier) * scale.parsed.multiplier + (item.scale.y-1 / 2)
+                    };
+                    
+                    // Calculate the distance between the center of the closest 1x1 squares
+                    let dist = Math.sqrt((closestSquare1.x - closestSquare2.x) ** 2 + (closestSquare1.y - closestSquare2.y) ** 2);
                     dist = dist * scale.parsed.multiplier
                     dist = dist / dpi
                     dist = Math.round(dist / 5) * 5
                     
-                    let odd_size = character.scale.x > 1.5 | character.scale.y > 1.5
-
+                    let odd_size = item.scale.x > 1.5 || item.scale.y > 1.5 || character.scale.x > 1.5 || character.scale.y > 1.5
+                    if (odd_size) {
+                        dist = dist - scale.parsed.multiplier
+                    }
                     distances.push([name_2, dist, odd_size])
                     
                 }
