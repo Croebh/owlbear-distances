@@ -31,7 +31,7 @@ async function getDistances() {
                     dist = dist / dpi
                     dist = Math.round(dist / 5) * 5
                     
-                    let odd_size = character.scale.x > 1 | character.scale.y > 1
+                    let odd_size = character.scale.x > 1.5 | character.scale.y > 1.5
 
                     distances.push([name_2, dist, odd_size])
                     
