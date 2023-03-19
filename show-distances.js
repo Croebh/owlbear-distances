@@ -24,7 +24,11 @@ async function getDistances() {
                 y: (item.scale.y > 1.5 ? (item.scale.y-1) / 2 : 0)
             };
                     
-            let text = `<table>`            
+            let text = `<table>
+            <colgroup>
+                <col width="100%" />
+                <col width="0%" />
+            </colgroup>`            
             let distances = []
 
             characters.forEach(character => {

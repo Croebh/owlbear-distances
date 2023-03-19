@@ -48,8 +48,20 @@ body {
 td {
   padding-left: 5px;
   padding-right: 5px;
+  white-space: nowrap;
+}
+
+td:nth-child(1) {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 1px;
 }
 
 tr:nth-child(even) {
   background: #ffffff0c;
 }
+
+table {
+  width: 100%
+}
+
