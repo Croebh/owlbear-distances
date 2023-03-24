@@ -22,9 +22,11 @@ export async function setupList(element) {
                 if (name) {
                     name = `<strong>${name}</strong>`
                 } else {
-                    name = `<em>Unlabeled</em>`
+                    name = `<strong>${item.name}</strong>`
                 }
                 const node = document.createElement("h3");
+
+
                 node.innerHTML = `${name}`;
                 nodes.push(node)
     
