@@ -4,7 +4,7 @@
     "manifest_version": 1,
     "action": {
       "title": "Character Distances",
-      "icon": "/public/distances.svg",
+      "icon": "/distances.svg",
       "popover": "/",
       "height": 200,
       "width": 300
