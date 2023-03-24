@@ -1,8 +1,6 @@
 import OBR, {isImage} from "@owlbear-rodeo/sdk";
 import "./style.css";
 
-const ID = "com.show-distance";
-
 function calcDistance(coord1, coord2, measurement, scale) {
     const multiplier = scale.parsed.multiplier
     const digits = scale.parsed.digits
@@ -37,7 +35,7 @@ function calcDistance(coord1, coord2, measurement, scale) {
     return distance
 }
 
-async function getDistances() {
+export async function getDistances(target) {
 
     const dpi = await OBR.scene.grid.getDpi()
     const scale = await OBR.scene.grid.getScale()
@@ -49,75 +47,77 @@ async function getDistances() {
         (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
     );
 
+    
+    let item_scale = Math.max(1, Math.floor(target.scale.x))
+    let item_bottom_right = {
+        x: Math.floor(target.position.x/dpi + ((item_scale-1)/2)),
+        y: Math.floor(target.position.y/dpi + ((item_scale-1)/2))
+    }
+
+    let table = `
+    <colgroup>
+        <col width="100%" />
+        <col width="0%" />
+    </colgroup>`
+    let distances = []
+
+    characters.forEach(character => {
+        if (character.id != target.id) {
+            let name = character.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
+            if (name) {
+                name = `<strong>${name}</strong>`
+            } else {
+                name = `<em>Unlabeled</em>`
+            }
+
+            let character_scale = Math.max(1, Math.floor(character.scale.x))
+            let character_bottom_right = {
+                x: Math.floor(character.position.x/dpi + ((character_scale-1)/2)),
+                y: Math.floor(character.position.y/dpi + ((character_scale-1)/2))
+            }
+            let closestDistance = Infinity
+            for (let i = 0; i < item_scale; i++) {
+                for (let j = 0; j < item_scale; j++) {
+                const square1X = item_bottom_right.x - i;
+                const square1Y = item_bottom_right.y - j;
+                    for (let k = 0; k < character_scale; k++) {
+                        for (let l = 0; l < character_scale; l++) {
+                            const square2X = character_bottom_right.x - k;
+                            const square2Y = character_bottom_right.y - l;
+            
+                            let distance = calcDistance({x: square1X, y: square1Y}, {x: square2X, y: square2Y}, measurement, scale)
+                            
+                            if (distance < closestDistance) {
+                                closestDistance = distance;
+                            }
+                        }
+                    }
+                }
+            }
+
+            distances.push({
+                target: name,
+                distance: closestDistance
+            })
+        }
+    });
+    distances.sort((a, b) => {
+        return a.distance - b.distance
+    }).forEach(dist => {
+        table += `<tr><td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away</td></tr>`
+    })
+    return table
+}
+
+OBR.onReady(async () => {
     const selection = await OBR.player.getSelection()
     if (selection) {
         const items = await OBR.scene.items.getItems(selection);
         for (const item of items) {
-
-            let item_scale = Math.max(1, Math.floor(item.scale.x))
-            let item_bottom_right = {
-                x: Math.floor(item.position.x/dpi + ((item_scale-1)/2)),
-                y: Math.floor(item.position.y/dpi + ((item_scale-1)/2))
-            }
-
-            let text = `<table>
-            <colgroup>
-                <col width="100%" />
-                <col width="0%" />
-            </colgroup>`
-            let distances = []
-
-            characters.forEach(character => {
-                if (character.id != item.id) {
-                    let name = character.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
-                    if (name) {
-                        name = `<strong>${name}</strong>`
-                    } else {
-                        name = `<em>Unlabeled</em>`
-                    }
-
-                    let character_scale = Math.max(1, Math.floor(character.scale.x))
-                    let character_bottom_right = {
-                        x: Math.floor(character.position.x/dpi + ((character_scale-1)/2)),
-                        y: Math.floor(character.position.y/dpi + ((character_scale-1)/2))
-                    }
-                    let closestDistance = Infinity
-                    for (let i = 0; i < item_scale; i++) {
-                        for (let j = 0; j < item_scale; j++) {
-                        const square1X = item_bottom_right.x - i;
-                        const square1Y = item_bottom_right.y - j;
-                            for (let k = 0; k < character_scale; k++) {
-                                for (let l = 0; l < character_scale; l++) {
-                                    const square2X = character_bottom_right.x - k;
-                                    const square2Y = character_bottom_right.y - l;
-                    
-                                    let distance = calcDistance({x: square1X, y: square1Y}, {x: square2X, y: square2Y}, measurement, scale)
-                                    
-                                    if (distance < closestDistance) {
-                                        closestDistance = distance;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    distances.push({
-                        target: name,
-                        distance: closestDistance
-                    })
-                }
-            });
-            distances.sort((a, b) => {
-                return a.distance - b.distance
-            }).forEach(dist => {
-                text += `<tr><td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away</td></tr>`
-            })
-            text += `</table>`
-            document.querySelector("#app").innerHTML = text;
+            const table = document.createElement("table");
+            let distances = await getDistances(item)
+            table.innerHTML = distances
+            document.querySelector("#app").replaceChildren(table)
         }
     }
-}
-
-OBR.onReady(async () => {
-    getDistances();
 });

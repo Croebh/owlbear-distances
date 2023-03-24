@@ -12,10 +12,10 @@ body {
 
 #app {
   margin: 0 auto;
-  display: flex;
+  /* display: flex;
   place-items: center;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 
 @media (prefers-color-scheme: light) {
@@ -65,3 +65,16 @@ table {
   width: 100%
 }
 
+h3 {
+  padding-left: 10px;
+  font-size: 1.17em;
+  margin-block-end: 0;
+  margin-block-start: 0.5em;
+}
+
+h3 + table {
+  width: calc(100% - 11px);
+  margin-left: 10px;
+  border-left: 3px solid #8d8d8d;
+  padding-left: 5px;
+}
