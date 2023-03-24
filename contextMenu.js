@@ -78,6 +78,7 @@ export function setupContextMenu() {
             .locked(true)
             .attachedTo(item.id)
             .id(`${ID}/context-menu.height/${item.id}`)
+            .visible(item.visible)
             .build()
             objects.push(image)
             item.metadata[`${ID}/metadata`] = {
