@@ -67,7 +67,7 @@ export async function getDistances(target) {
             if (name) {
                 name = `<strong>${name}</strong>`
             } else {
-                name = `<em>Unlabeled</em>`
+                name = `<strong>${character.name}</strong>`
             }
             
             if (!character.visible) {
