@@ -69,6 +69,10 @@ export async function getDistances(target) {
             } else {
                 name = `<em>Unlabeled</em>`
             }
+            
+            if (!character.visible) {
+                name = `<span class='invisible'>${name}</span>`
+            }
 
             let character_scale = Math.max(1, Math.floor(character.scale.x))
             let character_bottom_right = {
