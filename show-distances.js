@@ -3,10 +3,45 @@ import "./style.css";
 
 const ID = "com.show-distance";
 
+function calcDistance(coord1, coord2, measurement, scale) {
+    const multiplier = scale.parsed.multiplier
+    const digits = scale.parsed.digits
+
+    let distance = Infinity
+    const deltaX = Math.abs(coord1.x - coord2.x);
+    const deltaY = Math.abs(coord1.y - coord2.y);
+
+    switch (measurement) {
+        case 'CHEBYSHEV':
+            distance = Math.max(deltaX, deltaY)
+            distance *= multiplier
+            break
+        case "ALTERNATING":
+            let n_diag = Math.min(deltaX, deltaY)
+            let n_straight = Math.max(deltaX, deltaY) - n_diag
+            distance = Math.round(multiplier * n_straight + ((3*multiplier) * Math.floor(n_diag / 2)) + (multiplier * (n_diag % 2)))
+            break
+        case "EUCLIDEAN":
+            distance = Math.sqrt(
+                Math.pow(coord1.x - coord2.x, 2) + Math.pow(coord1.y - coord2.y, 2)
+            );
+            distance *= multiplier
+            break
+        case "MANHATTAN":
+            distance = deltaX + deltaY
+            distance *= multiplier
+            break
+    }    
+    distance = Math.round(distance * 10 ** digits) / 10 ** digits
+
+    return distance
+}
+
 async function getDistances() {
 
     const dpi = await OBR.scene.grid.getDpi()
     const scale = await OBR.scene.grid.getScale()
+    const measurement = await OBR.scene.grid.getMeasurement()
 
     const is_dm = await OBR.player.getRole() === "GM"
 
@@ -19,16 +54,17 @@ async function getDistances() {
         const items = await OBR.scene.items.getItems(selection);
         for (const item of items) {
 
-            const item_offset = {
-                x: (item.scale.x > 1.5 ? (item.scale.x-1) / 2 : 0),
-                y: (item.scale.y > 1.5 ? (item.scale.y-1) / 2 : 0)
-            };
-                    
+            let item_scale = Math.max(1, Math.floor(item.scale.x))
+            let item_bottom_right = {
+                x: Math.floor(item.position.x/dpi + ((item_scale-1)/2)),
+                y: Math.floor(item.position.y/dpi + ((item_scale-1)/2))
+            }
+
             let text = `<table>
             <colgroup>
                 <col width="100%" />
                 <col width="0%" />
-            </colgroup>`            
+            </colgroup>`
             let distances = []
 
             characters.forEach(character => {
@@ -40,39 +76,43 @@ async function getDistances() {
                         name = `<em>Unlabeled</em>`
                     }
 
-
-                    // Calculate the closest 1x1 square for each token                    
-                    const character_offset = {
-                        x: (character.scale.x > 1.5 ? (character.scale.x-1) / 2 : 0),
-                        y: (character.scale.y > 1.5 ? (character.scale.y-1) / 2 : 0)
-                    };
+                    let character_scale = Math.max(1, Math.floor(character.scale.x))
+                    let character_bottom_right = {
+                        x: Math.floor(character.position.x/dpi + ((character_scale-1)/2)),
+                        y: Math.floor(character.position.y/dpi + ((character_scale-1)/2))
+                    }
+                    let closestDistance = Infinity
+                    for (let i = 0; i < item_scale; i++) {
+                        for (let j = 0; j < item_scale; j++) {
+                        const square1X = item_bottom_right.x - i;
+                        const square1Y = item_bottom_right.y - j;
+                            for (let k = 0; k < character_scale; k++) {
+                                for (let l = 0; l < character_scale; l++) {
+                                    const square2X = character_bottom_right.x - k;
+                                    const square2Y = character_bottom_right.y - l;
                     
-                    const abs_distance = {
-                        x: Math.abs((item.position.x-character.position.x)/dpi) - (item_offset.x + character_offset.x),
-                        y: Math.abs((item.position.y-character.position.y)/dpi) - (item_offset.y + character_offset.y)
+                                    let distance = calcDistance({x: square1X, y: square1Y}, {x: square2X, y: square2Y}, measurement, scale)
+                                    
+                                    if (distance < closestDistance) {
+                                        closestDistance = distance;
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    let n_diag = Math.min(abs_distance.x, abs_distance.y)
-                    let n_straight = Math.max(abs_distance.x, abs_distance.y) - n_diag
-                    let dist = Math.round(5 * n_straight + (15 * Math.floor(n_diag / 2)) + (5 * (n_diag % 2)))
-                    dist = Math.ceil(dist / 5) * 5
-                    dist = Math.round(dist * 10 ** scale.parsed.digits) / 10 ** scale.parsed.digits
-                    
                     distances.push({
-                        target: name, 
-                        distance: dist
+                        target: name,
+                        distance: closestDistance
                     })
-                    
                 }
             });
             distances.sort((a, b) => {
                 return a.distance - b.distance
-            })
-            distances.forEach(dist => {
+            }).forEach(dist => {
                 text += `<tr><td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away</td></tr>`
             })
             text += `</table>`
-
             document.querySelector("#app").innerHTML = text;
         }
     }
