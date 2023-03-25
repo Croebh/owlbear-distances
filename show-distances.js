@@ -18,10 +18,17 @@ function calcDistance(coord1, coord2, measurement, scale, height_difference) {
             let n_diag = Math.min(deltaX, deltaY);
             let n_straight = Math.max(deltaX, deltaY) - n_diag;
             distance = Math.round(
-                multiplier * n_straight +
-                (3 * multiplier) * Math.floor(n_diag / 2) +
-                (multiplier * (n_diag % 2)) +
-                (multiplier * deltaZ)
+                n_straight +
+                3 * Math.floor(n_diag / 2) +
+                (n_diag % 2)
+            );
+            
+            let z_diag = Math.min(distance, deltaZ);
+            let z_straight = Math.max(distance, deltaZ) - z_diag;
+            distance = Math.round(
+                z_straight +
+                3 * Math.floor(z_diag / 2) +
+                (z_diag % 2)
             );
             break
         case "EUCLIDEAN":
@@ -36,9 +43,7 @@ function calcDistance(coord1, coord2, measurement, scale, height_difference) {
             distance = deltaX + deltaY + deltaY
             break
     }
-    if (measurement != "ALTERNATING") {
-        distance *= multiplier
-    }
+    distance *= multiplier
     distance = Math.round(distance * 10 ** digits) / 10 ** digits
 
     return distance
