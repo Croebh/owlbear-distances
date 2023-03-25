@@ -12,7 +12,7 @@ function calcDistance(coord1, coord2, measurement, scale, height_difference) {
 
     switch (measurement) {
         case 'CHEBYSHEV':
-            distance = Math.max(deltaX, deltaY, deltaY)
+            distance = Math.max(deltaX, deltaY, deltaZ)
             break
         case "ALTERNATING":
             let n_diag = Math.min(deltaX, deltaY);
