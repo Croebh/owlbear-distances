@@ -49,7 +49,7 @@ export function setupContextMenu() {
       var location = scripts[scripts.length - 1].src.replace(/(https?:\/\/.+?)\/.+/gm, '$1')
       const dpi = await OBR.scene.grid.getDpi()
       const scale = await OBR.scene.grid.getScale()
-      const item_height = parseInt(window.prompt(`Enter the vertical height of this combatant in ${scale.parsed.unit}`));
+      const item_height = parseInt(window.prompt(`Enter the vertical height of this combatant, in ${scale.parsed.unit}.\nEntering a value of 0 will reset their height.`));
       let objects = []
       OBR.scene.items.updateItems(context.items, (items) => {
         for (let item of items) {
