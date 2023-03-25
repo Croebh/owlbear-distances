@@ -46,7 +46,7 @@ export function setupContextMenu() {
     ],
     async onClick(context) {
       var scripts = document.getElementsByTagName('script');
-      var location = scripts[scripts.length - 1].src.split('/main.js')[0]
+      var location = scripts[scripts.length - 1].src.replace(/(https?:\/\/.+?)\/.+/gm, '$1')
       console.log(location)
       const dpi = await OBR.scene.grid.getDpi()
       const scale = await OBR.scene.grid.getScale()
