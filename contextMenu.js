@@ -45,6 +45,8 @@ export function setupContextMenu() {
       },
     ],
     async onClick(context) {
+      var scripts = document.getElementsByTagName('script');
+      var location = scripts[scripts.length - 1].src.split('main.js')[0]
       const dpi = await OBR.scene.grid.getDpi()
       const scale = await OBR.scene.grid.getScale()
       const item_height = parseInt(window.prompt(`Enter the vertical height of this combatant in ${scale.parsed.unit}`));
@@ -64,7 +66,7 @@ export function setupContextMenu() {
             const image = buildImage({
                 height: 40,
                 width: 40,
-                url: "http://localhost:5173/wing.png",
+                url: `${location}/wing.png`,
                 mime: "image/png",
               },
               { 
