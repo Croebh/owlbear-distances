@@ -8,7 +8,7 @@ tags:
   - distance
   - height
 manifest: https://owlbear-distances.onrender.com/manifest.json
-learn-more: icrona@gmail.com
+learn-more: https://github.com/Croebh/owlbear-distances
 ---
 
 # Character Distances
