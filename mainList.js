@@ -9,11 +9,11 @@ export async function setupList(element) {
     const characters = await OBR.scene.items.getItems(
         (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
     );
-    let last_selection = [];
-    const renderList = async (player) => {
+    const renderList = async (change) => {
         const nodes = [];
-        if (player.selection) {
-            const items = await OBR.scene.items.getItems(player.selection);
+        const selection = await OBR.player.getSelection();
+        if (selection) {
+            const items = await OBR.scene.items.getItems(selection);
             for (const item of items) {
                 if (item.layer != "CHARACTER") {
                     continue
@@ -36,15 +36,14 @@ export async function setupList(element) {
                 nodes.push(table)
             }
             element.replaceChildren(...nodes);
-            OBR.action.setHeight(Math.min(document.querySelector("#app").offsetHeight + 20, 600));
         } else {
             document.querySelector("#app").innerHTML = `<h3 style='text-align: center'>No character selected</h3>`;
-            OBR.action.setHeight(40);
         }
         if (!document.querySelector("#app").innerHTML) {
             document.querySelector("#app").innerHTML = `<h3 style='text-align: center'>No character selected</h3>`;
-            OBR.action.setHeight(40);
         }
+        OBR.action.setHeight(Math.min(document.querySelector("body").offsetHeight + 20, 600));
     }    
     OBR.player.onChange(renderList);
+    OBR.scene.items.onChange(renderList);
 }

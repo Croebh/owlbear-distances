@@ -1,7 +1,7 @@
 import OBR, {isImage} from "@owlbear-rodeo/sdk";
 import "./style.css";
 
-function calcDistance(coord1, coord2, measurement, scale, height_difference) {
+function calcDistance(coord1, coord2, measurement, scale, height_difference, vertical_measurement) {
     const multiplier = scale.parsed.multiplier
     const digits = scale.parsed.digits
 
@@ -10,9 +10,13 @@ function calcDistance(coord1, coord2, measurement, scale, height_difference) {
     const deltaY = Math.abs(coord1.y - coord2.y);
     const deltaZ = Math.abs(height_difference) / multiplier
 
+    if (vertical_measurement === "DEFAULT") {
+        vertical_measurement = measurement
+    }
+
     switch (measurement) {
         case 'CHEBYSHEV':
-            distance = Math.max(deltaX, deltaY, deltaZ)
+            distance = Math.max(deltaX, deltaY)
             break
         case "ALTERNATING":
             let n_diag = Math.min(deltaX, deltaY);
@@ -22,7 +26,22 @@ function calcDistance(coord1, coord2, measurement, scale, height_difference) {
                 3 * Math.floor(n_diag / 2) +
                 (n_diag % 2)
             );
-            
+            break
+        case "EUCLIDEAN":
+            distance = Math.sqrt(
+                Math.pow(coord1.x - coord2.x, 2) + Math.pow(coord1.y - coord2.y, 2)
+            );
+            break
+        case "MANHATTAN":
+            distance = deltaX + deltaY
+            break
+    }
+
+    switch (vertical_measurement) {
+        case 'CHEBYSHEV':
+            distance = Math.max(distance, deltaZ)
+            break
+        case "ALTERNATING":            
             let z_diag = Math.min(distance, deltaZ);
             let z_straight = Math.max(distance, deltaZ) - z_diag;
             distance = Math.round(
@@ -33,16 +52,14 @@ function calcDistance(coord1, coord2, measurement, scale, height_difference) {
             break
         case "EUCLIDEAN":
             distance = Math.sqrt(
-                Math.pow(coord1.x - coord2.x, 2) + Math.pow(coord1.y - coord2.y, 2)
-            );
-            distance = Math.sqrt(
                 Math.pow(distance, 2) + Math.pow(deltaZ, 2)
             )
             break
         case "MANHATTAN":
-            distance = deltaX + deltaY + deltaY
+            distance = distance + deltaZ
             break
     }
+
     distance *= multiplier
     distance = Math.round(distance * 10 ** digits) / 10 ** digits
 
@@ -54,6 +71,7 @@ export async function getDistances(target) {
     const dpi = await OBR.scene.grid.getDpi()
     const scale = await OBR.scene.grid.getScale()
     const measurement = await OBR.scene.grid.getMeasurement()
+    const vertical_measurement = await OBR.room.getMetadata().then((data) => data.vertical_measurement || "DEFAULT")
 
     const is_dm = await OBR.player.getRole() === "GM"
 
@@ -114,7 +132,7 @@ export async function getDistances(target) {
                             const square2X = character_bottom_right.x - k;
                             const square2Y = character_bottom_right.y - l;
             
-                            let distance = calcDistance({x: square1X, y: square1Y}, {x: square2X, y: square2Y}, measurement, scale, height_difference)
+                            let distance = calcDistance({x: square1X, y: square1Y}, {x: square2X, y: square2Y}, measurement, scale, height_difference, vertical_measurement)
                             
                             if (distance < closestDistance) {
                                 closestDistance = distance;

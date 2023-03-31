@@ -75,3 +75,42 @@ h3 + table {
   color: blue;
   background-size: 15px 15px;
 }
+
+/* Put both the span and select in one line in #config */
+#config {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+#config > span {
+  display: inline-block;
+  font-size: .9em;
+}
+
+/* style the select */
+#vertical {
+  /* width: 100%; */
+  height: 100%;
+  font-size: 0.9em;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  color: #bbbbbb;
+  text-decoration: underline;
+  outline: none;
+  text-align: center;
+  width: auto;
+}
+
+#vertical:focus {
+  outline: none;
+  background-color: rgb(34, 38, 57);
+}
