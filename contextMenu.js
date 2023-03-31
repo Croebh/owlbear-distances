@@ -15,7 +15,6 @@ export function setupContextMenu() {
       },
     ],
     async onClick(context, elementId) {
-
       OBR.popover.open({
         id: `${ID}/show-distances`,
         height: 130,
