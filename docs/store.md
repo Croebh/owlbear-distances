@@ -5,8 +5,8 @@ author: Croebh
 image: https://raw.githubusercontent.com/Croebh/owlbear-distances/main/docs/header.jpg
 icon: https://owlbear-distances.onrender.com/logo.png
 tags:
-  - distance
-  - height
+  - other
+  - combat
 manifest: https://owlbear-distances.onrender.com/manifest.json
 learn-more: https://github.com/Croebh/owlbear-distances
 ---
