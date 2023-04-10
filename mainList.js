@@ -9,10 +9,12 @@ export async function setupList(element) {
     const characters = await OBR.scene.items.getItems(
         (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
     );
+    let last_selection = []
     const renderList = async (change) => {
         const nodes = [];
-        const selection = await OBR.player.getSelection();
+        const selection = await OBR.player.getSelection() || last_selection;
         if (selection) {
+            last_selection = selection
             const items = await OBR.scene.items.getItems(selection);
             for (const item of items) {
                 if (item.layer != "CHARACTER") {
