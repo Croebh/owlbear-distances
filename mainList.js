@@ -6,9 +6,6 @@ const ID = "com.tutorial.initiative-tracker";
 
 export async function setupList(element) {
     const is_dm = await OBR.player.getRole() === "GM"
-    const characters = await OBR.scene.items.getItems(
-        (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
-    );
     let last_selection = []
     const renderList = async (change) => {
         const nodes = [];
@@ -17,7 +14,7 @@ export async function setupList(element) {
             last_selection = selection
             const items = await OBR.scene.items.getItems(selection);
             for (const item of items) {
-                if (item.layer != "CHARACTER") {
+                if (item.layer != "CHARACTER" || !isImage(item) || (is_dm && !item.visible)) {
                     continue
                 }
                 let name = item.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
