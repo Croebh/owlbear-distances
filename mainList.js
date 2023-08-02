@@ -14,7 +14,7 @@ export async function setupList(element) {
             last_selection = selection
             const items = await OBR.scene.items.getItems(selection);
             for (const item of items) {
-                if (item.layer != "CHARACTER" || !isImage(item) || (is_dm && !item.visible)) {
+                if (item.layer != "CHARACTER" || !isImage(item) || (!is_dm && !item.visible)) {
                     continue
                 }
                 let name = item.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
