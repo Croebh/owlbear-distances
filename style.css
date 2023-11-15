@@ -83,6 +83,7 @@ h3 + table {
   align-items: center;
   justify-content: center;
   gap: 5px;
+  margin: 10px;
 }
 
 #config > span {

@@ -11,20 +11,26 @@ OBR.onReady(() => {
   
   // Hide #config if not a GM
   OBR.player.getRole().then((role) => {
-    if (role !== "GM") {
-      document.querySelector("#config").style.display = "none";
+    let config_element = document.querySelector("#config");
+    if (role == "GM" && config_element) {
+      config_element.style.display = "block";
     }
   });
 
   // on room load, set the select to the room metadata
-  let select = document.querySelector("#vertical")
+  let select_element = document.querySelector("#vertical")
   OBR.room.getMetadata().then((data) => {
     let vertical = data.vertical_measurement || "DEFAULT"
-    select.value = vertical    
+    if (select_element) {
+      select_element.value = vertical    
+    }
   })  
   
   // set room metadata when a select is chosen
-  select.onchange = (e) => {
-    OBR.room.setMetadata({ vertical_measurement: e.target.value })
+  if (select_element) {
+    select_element.onchange = (e) => {
+      OBR.room.setMetadata({ vertical_measurement: e.target.value })
+    }
   }
+  
 });

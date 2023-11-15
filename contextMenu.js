@@ -8,28 +8,15 @@ export function setupContextMenu() {
     icons: [
       {
         icon: "/distances.svg",
-        label: "Show Distances",
+        label: "Distances",
         filter: {
           every: [{ key: "layer", value: "CHARACTER" }],
         },
       },
     ],
-    async onClick(context, elementId) {
-      OBR.popover.open({
-        id: `${ID}/show-distances`,
-        height: 130,
-        width: 300,
-        url: "/show-distances.html",
-        anchorElementId: elementId,
-        anchorOrigin: {
-          horizontal: "CENTER",
-          vertical: "BOTTOM",
-        },
-        transformOrigin: {
-          horizontal: "CENTER",
-          vertical: "TOP",
-        },
-      });
+    embed: {
+      url: "/show-distances.html",
+      height: 120,
     },
   });
   OBR.contextMenu.create({
@@ -76,6 +63,7 @@ export function setupContextMenu() {
             .plainText(`${item_height} ${scale.parsed.unit}.`)
             .locked(true)
             .attachedTo(item.id)
+            .disableAttachmentBehavior(["ROTATION"])
             .id(`${ID}/context-menu.height/${item.id}`)
             .visible(item.visible)
             .build()
