@@ -1,9 +1,6 @@
 import OBR, {isImage} from "@owlbear-rodeo/sdk";
 import { getDistances } from "./show-distances"
 
-const ID = "com.tutorial.initiative-tracker";
-
-
 export async function setupList(element) {
     const is_dm = await OBR.player.getRole() === "GM"
     let last_selection = []

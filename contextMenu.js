@@ -44,8 +44,6 @@ export function setupContextMenu() {
       },
     ],
     async onClick(context) {
-      var scripts = document.getElementsByTagName('script');
-      var location = scripts[scripts.length - 1].src.replace(/(https?:\/\/.+?)\/.+/gm, '$1')
       const dpi = await OBR.scene.grid.getDpi()
       const scale = await OBR.scene.grid.getScale()
       const item_height = parseInt(window.prompt(`Enter the vertical height of this combatant, in ${scale.parsed.unit}.\nEntering a value of 0 will reset their height.`));
@@ -65,7 +63,7 @@ export function setupContextMenu() {
             const image = buildImage({
                 height: 40,
                 width: 40,
-                url: `${location}/wing.png`,
+                url: `https://owlbear-distances.onrender.com/wing.png`,
                 mime: "image/png",
               },
               { 
