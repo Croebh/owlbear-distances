@@ -18,7 +18,7 @@ export async function setupList(element) {
                 if (name) {
                     name = `<strong>${name}</strong>`
                 } else {
-                    name = `<strong>${item.name}</strong>`
+                    name = `<strong><em>Unnamed Token</em></strong>`
                 }
                 const node = document.createElement("h3");
 
