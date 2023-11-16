@@ -104,7 +104,7 @@ export async function getDistances(target) {
             if (name) {
                 name = `<strong>${name}</strong>`
             } else {
-                name = `<strong>${character.name}</strong>`
+                name = `<strong><em>Unnamed Token</em></strong>`
             }
 
             let character_height = 0            
