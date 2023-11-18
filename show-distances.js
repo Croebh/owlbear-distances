@@ -1,5 +1,6 @@
 import OBR, {isImage} from "@owlbear-rodeo/sdk";
 import "./style.css";
+import { getMetadata, nameDisplay } from "./utils";
 
 function calcDistance(coord1, coord2, measurement, scale, height_difference, vertical_measurement) {
     const multiplier = scale.parsed.multiplier
@@ -75,6 +76,8 @@ export async function getDistances(target) {
 
     const is_dm = await OBR.player.getRole() === "GM"
 
+    const sceneMetadata = await getMetadata()
+
     const characters = await OBR.scene.items.getItems(
         (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
     );
@@ -98,15 +101,10 @@ export async function getDistances(target) {
     </colgroup>`
     let distances = []
 
-    characters.forEach(character => {
+    characters.forEach( character => {
         if (character.id != target.id) {
-            let name = character.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
-            if (name) {
-                name = `<strong>${name}</strong>`
-            } else {
-                name = `<strong><em>Unnamed Token</em></strong>`
-            }
-
+            let name = nameDisplay(character, sceneMetadata)
+            
             let character_height = 0            
             if (character.metadata[`com.show-distances.menu/metadata`] != undefined) {
                 character_height = character.metadata[`com.show-distances.menu/metadata`].item_height
@@ -123,6 +121,8 @@ export async function getDistances(target) {
                 y: Math.floor(character.position.y/dpi + ((character_scale-1)/2))
             }
             let closestDistance = Infinity
+            let startPosition = {x: item_bottom_right.x, y: item_bottom_right.y}
+            let endPosition = {x: character_bottom_right.x, y: character_bottom_right.y}
             for (let i = 0; i < item_scale; i++) {
                 for (let j = 0; j < item_scale; j++) {
                 const square1X = item_bottom_right.x - i;
@@ -136,6 +136,8 @@ export async function getDistances(target) {
                             
                             if (distance < closestDistance) {
                                 closestDistance = distance;
+                                startPosition = {x: square1X, y: square1Y}
+                                endPosition = {x: square2X, y: square2Y}
                             }
                         }
                     }
@@ -145,14 +147,16 @@ export async function getDistances(target) {
             distances.push({
                 target: name,
                 distance: closestDistance,
-                height: height_difference
+                height: height_difference,
+                start: startPosition,
+                end: endPosition
             })
         }
     });
     distances.sort((a, b) => {
         return a.distance - b.distance
     }).forEach(dist => {
-        table += `<tr><td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away ${dist.height ? (dist.height > 0 ? '↑' : '↓') : ''}</td></tr>`
+        table += `<tr start-x=${dist.start.x} start-y=${dist.start.y} end-x=${dist.end.x} end-y=${dist.end.y} ><td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away ${dist.height ? (dist.height > 0 ? '↑' : '↓') : ''}</td></tr>`
     })
     return table
 }

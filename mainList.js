@@ -1,8 +1,10 @@
 import OBR, {isImage} from "@owlbear-rodeo/sdk";
 import { getDistances } from "./show-distances"
+import { nameDisplay, getMetadata } from "./utils";
 
 export async function setupList(element) {
     const is_dm = await OBR.player.getRole() === "GM"
+    const sceneMetadata = await getMetadata()
     let last_selection = []
     const renderList = async (change) => {
         const nodes = [];
@@ -14,14 +16,8 @@ export async function setupList(element) {
                 if (item.layer != "CHARACTER" || !isImage(item) || (!is_dm && !item.visible)) {
                     continue
                 }
-                let name = item.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
-                if (name) {
-                    name = `<strong>${name}</strong>`
-                } else {
-                    name = `<strong><em>Unnamed Token</em></strong>`
-                }
+                let name = nameDisplay(item, sceneMetadata)
                 const node = document.createElement("h3");
-
 
                 node.innerHTML = `${name}`;
                 nodes.push(node)
