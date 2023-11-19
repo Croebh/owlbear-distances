@@ -12,7 +12,7 @@ export function nameDisplay(item, sceneMetadata) {
 
     // Add support for Stat Bubbles nametags
     let statBubblesID = "com.owlbear-rodeo-bubbles-extension/metadata"
-    if (!name && sceneMetadata?.[statBubblesID]?.['name-tags']) {
+    if (sceneMetadata?.[statBubblesID]?.['name-tags']) {
         name = item.name
     }    
     
