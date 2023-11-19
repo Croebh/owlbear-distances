@@ -1,10 +1,13 @@
 import OBR from "@owlbear-rodeo/sdk";
 
 export async function getMetadata() {
-    const sceneMetadata = await OBR.scene.getMetadata();
-    const retrievedMetadata = JSON.parse(JSON.stringify(sceneMetadata));
-
-    return retrievedMetadata
+    OBR.onReady(() => {
+        OBR.scene.onReadyChange(async () => {
+            const sceneMetadata = await OBR.scene.getMetadata();
+            const retrievedMetadata = JSON.parse(JSON.stringify(sceneMetadata));
+            return retrievedMetadata
+        });
+    });
 }
 
 export function nameDisplay(item, sceneMetadata) {
