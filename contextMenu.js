@@ -44,10 +44,11 @@ export function setupContextMenu() {
             // Apply image offset and offset position to be centered just above the token label
             const position = {
               x: item.position.x,
-              y: item.position.y + offsetY - 50,
+              y: item.position.y + offsetY - 60,
             };
 
-            const image = buildImage({
+            const image = buildImage(
+              {
                 height: 40,
                 width: 40,
                 url: `https://owlbear-distances.onrender.com/wing.png`,
@@ -56,7 +57,8 @@ export function setupContextMenu() {
               { 
                 dpi: 40, 
                 offset: { x: 20, y: 20 } 
-              })
+              }
+            )
             .position(position)
             .layer("ATTACHMENT")
             .scale({x: 0.3, y: .3})
