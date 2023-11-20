@@ -31,4 +31,12 @@ OBR.onReady(() => {
             OBR.scene.setMetadata({ [getExtensionId("useFileName")]: e.target.checked })
         }
     }
+
+    // Close modal when footer is clicked
+    let close_button = document.querySelector(".footer")
+    if (close_button) {
+        close_button.addEventListener("click", () => {
+            OBR.modal.close(getExtensionId("modal"))
+        })
+    }
 })
