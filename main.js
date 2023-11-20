@@ -14,10 +14,17 @@ OBR.onReady(() => {
   
   // Hide #config if not a GM
   OBR.player.getRole().then((role) => {
-    let config_element = document.querySelector("#config-button");
-    if (role == "GM" && config_element) {
-      config_element.style.display = "block";
-    }
+    enable_config(role);
+  });
+  OBR.player.onRoleChange((role) => {
+    enable_config(role);
+});
+});
+
+function enable_config(role) {
+  let config_element = document.querySelector("#config-button");
+  if (role == "GM" && config_element) {
+    config_element.style.display = "block";
     config_element.addEventListener("click", () => {
       OBR.modal.open({
         id: getExtensionId("modal"),
@@ -27,5 +34,8 @@ OBR.onReady(() => {
         fullScreen: mobile
       })
     });
-  });  
-});
+  } else if (config_element) {
+    config_element.style.display = "none";
+    config_element.removeEventListener("click")
+  }    
+}
