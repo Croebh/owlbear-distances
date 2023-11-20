@@ -30,17 +30,19 @@ function enable_config(role) {
   let config_element = document.querySelector("#config-button");
   if (role == "GM" && config_element) {
     config_element.style.display = "block";
-    config_element.addEventListener("click", () => {
-      OBR.modal.open({
-        id: getExtensionId("modal"),
-        url: "/modal.html",
-        height: 500,
-        width: 500,
-        fullScreen: navigator.userAgentData.mobile
-      })
-    });
+    config_element.addEventListener("click", modalOpener);
   } else if (config_element) {
     config_element.style.display = "none";
-    config_element.removeEventListener("click")
+    config_element.removeEventListener("click", modalOpener)
   }    
+}
+
+function modalOpener() {
+  OBR.modal.open({
+    id: getExtensionId("modal"),
+    url: "/modal.html",
+    height: 500,
+    width: 500,
+    fullScreen: navigator.userAgentData.mobile
+  })
 }
