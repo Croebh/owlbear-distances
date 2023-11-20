@@ -7,6 +7,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         "show-distances": resolve(__dirname, "show-distances.html"),
+        "modal": resolve(__dirname, "modal.html"),
       },
     },
   },
