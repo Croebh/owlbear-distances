@@ -1,6 +1,6 @@
 import OBR, {isImage} from "@owlbear-rodeo/sdk";
 import "./style.css";
-import { getMetadata, nameDisplay } from "./utils";
+import { nameDisplay, getExtensionId } from "./utils";
 
 function calcDistance(coord1, coord2, measurement, scale, height_difference, vertical_measurement) {
     const multiplier = scale.parsed.multiplier
@@ -76,7 +76,7 @@ export async function getDistances(target) {
 
     const is_dm = await OBR.player.getRole() === "GM"
 
-    const sceneMetadata = await getMetadata()
+    const sceneMetadata = await OBR.scene.getMetadata();
 
     const characters = await OBR.scene.items.getItems(
         (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
@@ -84,8 +84,8 @@ export async function getDistances(target) {
 
 
     let item_height = 0            
-    if (target.metadata[`com.show-distances.menu/metadata`] != undefined) {
-        item_height = target.metadata[`com.show-distances.menu/metadata`].item_height
+    if (target.metadata[getExtensionId("metadata")] != undefined) {
+        item_height = target.metadata[getExtensionId("metadata")].item_height
     }
     
     let item_scale = Math.max(1, Math.floor(target.scale.x))
@@ -106,8 +106,8 @@ export async function getDistances(target) {
             let name = nameDisplay(character, sceneMetadata)
             
             let character_height = 0            
-            if (character.metadata[`com.show-distances.menu/metadata`] != undefined) {
-                character_height = character.metadata[`com.show-distances.menu/metadata`].item_height
+            if (character.metadata[getExtensionId("metadata")] != undefined) {
+                character_height = character.metadata[getExtensionId("metadata")].item_height
             }
             const height_difference = character_height - item_height
 
@@ -136,8 +136,8 @@ export async function getDistances(target) {
                             
                             if (distance < closestDistance) {
                                 closestDistance = distance;
-                                startPosition = {x: square1X, y: square1Y}
-                                endPosition = {x: square2X, y: square2Y}
+                                startPosition = {x: square1X*dpi, y: square1Y*dpi}
+                                endPosition = {x: square2X*dpi, y: square2Y*dpi}
                             }
                         }
                     }

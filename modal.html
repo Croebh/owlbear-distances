@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Show Distances Config</title>
+  </head>
+  <body>
+    <div id="config">
+        <div><h2>Character Distances Settings</h2></div>
+        <hr />
+        <div>
+            <span class="settings-name">Vertical Measurement</span>
+            <select id="vertical">
+                <option value="DEFAULT">Default (Grid Setting)</option>
+                <option value="CHEBYSHEV">Chessboard</option>
+                <option value="ALTERNATING">Alternating Diagonal</option>
+                <option value="EUCLIDEAN">Euclidean</option>
+                <option value="MANHATTAN">Manhattan</option>
+            </select>
+            <div class="setting-desc">
+                <p>By default, the vertical measurement is the same as the grid setting, however you can set it to use a different calculation should you choose.</p>
+                <p><a href="https://docs.owlbear.rodeo/docs/measure/#measurement-type" target="_blank">Owlbear Docs on Measurement Types</a></p>                
+            </div>
+        </div>
+        <hr />
+        <div>
+            <span class="settings-name">Use Name (+ Label)</span>
+            <input type="checkbox" id="useFileName">
+            <div class="setting-desc">
+                <p>This will use the file name in addition to any existing label when displaying the character name.</p>
+                <p>For example, <strong>Name (Label)</strong></p>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="footer"><em>Click or tap off this modal to close</em></div>
+    <script type="module" src="/modal.js"></script>
+  </body>
+</html>

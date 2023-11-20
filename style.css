@@ -77,13 +77,16 @@ h3 + table {
 }
 
 /* Put both the span and select in one line in #config */
-#config {
-  display: flex;
+#config div {
+  /* display: flex;
   align-content: center;
   align-items: center;
-  justify-content: center;
+  justify-content: center; */
   gap: 5px;
   margin: 10px;
+}
+#config h2 {
+  text-align: center;
 }
 
 #config > span {
@@ -114,4 +117,52 @@ h3 + table {
 #vertical:focus {
   outline: none;
   background-color: rgb(34, 38, 57);
+}
+
+.footer {
+  text-align: center;
+  margin-top: 30px;  
+  font-size: 0.9em;
+}
+
+#config-button {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #bbbbbb;
+  font-size: 1.5em;
+  cursor: pointer;
+  outline: none;
+}
+
+.target-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width:85%;
+  overflow: hidden;
+}
+
+.setting-desc {
+  font-size: 0.95em;
+  font-style: italic;
+}
+
+.settings-name {
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.settings-name::after {
+  content: ' -';
+}
+
+a {
+  color: white
+}
+
+input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
 }

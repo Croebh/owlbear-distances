@@ -1,6 +1,7 @@
 import OBR, { buildImage } from "@owlbear-rodeo/sdk";
+import { getExtensionId } from "./utils";
 
-const ID = "com.show-distances.menu";
+const ID = getExtensionId("menu")
 
 export function setupContextMenu() {
   OBR.contextMenu.create({
