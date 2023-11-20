@@ -18,7 +18,14 @@ OBR.onReady(() => {
   });
   OBR.player.onChange((player) => {
     enable_config(player.role);
-});
+  });
+  OBR.scene.onReadyChange((ready) => {
+    if (ready) {
+      OBR.player.getRole().then((role) => {
+        enable_config(role);
+      });
+    }
+  });
 });
 
 function enable_config(role) {
