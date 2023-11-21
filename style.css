@@ -180,7 +180,7 @@ input[type="checkbox"] {
   position: relative;
 }
 
-.set-height form {
+.set-height .input-wrapper {
   display: flex;
   align-items: center;
   gap: 5px;

@@ -27,6 +27,16 @@ OBR.onReady(async () => {
     input.attributes["step"].value = scale.parsed.multiplier;
     unit.innerHTML = `${scale.parsed.unit}.`;
     
+    window.addEventListener('keydown', (e) => {
+        if (e.keyIdentifier=='U+000A' || e.keyIdentifier=='Enter' || e.keyCode==13) {
+            if (e.target.nodeName=='input' && e.target.type=='number') {
+                e.preventDefault();
+
+                return false;
+            }
+        }
+    }, true);
+
     let debounced_set_height = debounce(set_height, 250);
 
     input.addEventListener("keyup", debounced_set_height);
@@ -34,6 +44,7 @@ OBR.onReady(async () => {
     reset.addEventListener("click", debounced_set_height);
 
     async function set_height(event) {
+        console.log(event.keyIdentifier)
         if (event.keyIdentifier=='U+000A' || event.keyIdentifier=='Enter') {
             if (event.target.nodeName=='input') {
                 event.preventDefault();
