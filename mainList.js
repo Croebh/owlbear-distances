@@ -22,7 +22,6 @@ export async function setupList(element) {
                 
                 node.className = "target-name"
                 node.innerHTML = `${name}`;
-                console.log(node)
                 nodes.push(node)
     
                 const table = document.createElement("table");

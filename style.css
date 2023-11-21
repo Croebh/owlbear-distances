@@ -166,3 +166,46 @@ input[type="checkbox"] {
   width: 15px;
   height: 15px;
 }
+
+
+
+/* Set Height Menu */
+
+.set-height {
+  margin: 0 10px;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.set-height form {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.set-height #height {
+  width: 80px;
+  text-align: center;
+  background: none;
+  color: white;
+  height:20px;
+  border: 1px solid white;
+}
+
+/* Always show the up/down buttons on Chrome */
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button {  
+  opacity: 1;
+}
+.set-height #unit {
+  font-style: italic;
+  /* font-size: 0.em; */
+  /* position:absolute; */
+  /* top: 19px; */
+  /* right: 10px; */
+}
+.set-height #reset {
+  margin-left: 10px;
+}
