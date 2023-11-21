@@ -30,10 +30,16 @@ OBR.onReady(async () => {
     let debounced_set_height = debounce(set_height, 250);
 
     input.addEventListener("keyup", debounced_set_height);
-    input.addEventListener("change", debounced_set_height);
+    input.addEventListener("input", debounced_set_height);
     reset.addEventListener("click", debounced_set_height);
 
     async function set_height(event) {
+        if (event.keyIdentifier=='U+000A' || event.keyIdentifier=='Enter') {
+            if (event.target.nodeName=='input') {
+                event.preventDefault();
+                return false;
+            }
+        } 
         let item_height = parseInt(event.target.value);
         
         const dpi = await OBR.scene.grid.getDpi()

@@ -173,6 +173,7 @@ input[type="checkbox"] {
 
 .set-height {
   margin: 0 10px;
+  display: flex;
 }
 
 .input-wrapper {
@@ -201,10 +202,6 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .set-height #unit {
   font-style: italic;
-  /* font-size: 0.em; */
-  /* position:absolute; */
-  /* top: 19px; */
-  /* right: 10px; */
 }
 .set-height #reset {
   margin-left: 10px;
