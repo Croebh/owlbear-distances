@@ -1,8 +1,14 @@
 import OBR from "@owlbear-rodeo/sdk";
 import "./style.css";
-import { getExtensionId } from "./utils";
+import { getExtensionId, setThemeMode } from "./utils";
 
-OBR.onReady(() => {
+OBR.onReady(async () => {
+    const theme = await OBR.theme.getTheme();
+    setThemeMode(theme, document);
+    OBR.theme.onChange((theme) =>
+    {
+        setThemeMode(theme, document);
+    });
     // on room load, set the values to the scenes values
     let select_element = document.querySelector("select#vertical")
     let name_label_input = document.querySelector("input#useFileName")

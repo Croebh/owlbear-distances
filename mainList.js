@@ -1,6 +1,5 @@
-import OBR, {buildRuler, isImage} from "@owlbear-rodeo/sdk";
-import { getDistances } from "./show-distances"
-import { nameDisplay, getExtensionId } from "./utils";
+import OBR, {isImage} from "@owlbear-rodeo/sdk";
+import { nameDisplay, getDistances } from "./utils";
 
 export async function setupList(element) {
     const is_dm = await OBR.player.getRole() === "GM"
@@ -30,35 +29,6 @@ export async function setupList(element) {
                 nodes.push(table)
             }
             element.replaceChildren(...nodes);
-            // let rows = element.querySelector("tr")
-            // for (let row of rows) {
-            //     row.addEventListener("mouseOver", async () => {
-            //         let existing_rule = await OBR.scene.items.getItems((item) => item.id === getExtensionId("ruler"))
-            //         let distance = row.lastChild.innerHTML
-                    
-            //         let start_x = row.getAttribute("start-x")
-            //         let start_y = row.getAttribute("start-y")
-            //         let end_x = row.getAttribute("end-x")
-            //         let end_y = row.getAttribute("end-y")
-            //         let ruler = buildRuler()
-            //         .measurement(distance)
-            //         .variant("DASHED")
-            //         .startPosition({x: parseInt(start_x), y: parseInt(start_y)})
-            //         .endPosition({x: parseInt(end_x), y: parseInt(end_y)})
-            //         .id(getExtensionId("ruler"))
-            //         .build();
-                    
-            //         if (!existing_rule.length) {
-            //             OBR.scene.items.addItems([ruler]);
-            //         }
-            //     });
-            //     row.addEventListener("mouseOut", async () => {
-            //         let existing_rule = await OBR.scene.items.getItems((item) => item.id === getExtensionId("ruler"))
-            //         if (existing_rule.length) {
-            //             OBR.scene.items.removeItems(existing_rule);
-            //         }
-            //     });
-            // }
         } else {
             document.querySelector("#app").innerHTML = `<h3 style='text-align: center'>No character selected</h3>`;
         }

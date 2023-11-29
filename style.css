@@ -1,9 +1,20 @@
+@media (prefers-color-scheme: light) {
+  :root {
+    --main-color: rgba(50, 50, 50, 0.87);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-color: rgba(255, 255, 255, 0.87);
+  }
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.87);
-
+  color: var(--main-color)
 }
+
 body {
   margin: 0;
 }
@@ -107,7 +118,7 @@ h3 + table {
   -moz-appearance: none;
   appearance: none;
   background: none;
-  color: #bbbbbb;
+  color: var(--main-color);
   text-decoration: underline;
   outline: none;
   text-align: center;
@@ -131,7 +142,7 @@ h3 + table {
   right: 12px;
   background: none;
   border: none;
-  color: #bbbbbb;
+  color: var(--main-color);
   font-size: 1.5em;
   cursor: pointer;
   outline: none;
@@ -159,7 +170,7 @@ h3 + table {
 }
 
 a {
-  color: white
+  color: var(--main-color);
 }
 
 input[type="checkbox"] {
@@ -190,9 +201,10 @@ input[type="checkbox"] {
   width: 80px;
   text-align: center;
   background: none;
-  color: white;
+  color: var(--main-color);
   height:20px;
-  border: 1px solid white;
+  border: 1px solid;
+  border-color: var(--main-color);
 }
 
 /* Always show the up/down buttons on Chrome */

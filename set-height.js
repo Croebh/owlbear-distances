@@ -1,10 +1,17 @@
 import OBR, {buildImage} from "@owlbear-rodeo/sdk";
 import "./style.css";
-import { getExtensionId, debounce } from "./utils";
+import { getExtensionId, debounce, setThemeMode } from "./utils";
 
 const meta_id = getExtensionId("metadata")
 
 OBR.onReady(async () => {
+    const theme = await OBR.theme.getTheme();
+    setThemeMode(theme, document);
+    OBR.theme.onChange((theme) =>
+    {
+        setThemeMode(theme, document);
+    });
+
     const scale = await OBR.scene.grid.getScale()
     const selection = await OBR.player.getSelection()
     let current_height = 0
@@ -12,9 +19,9 @@ OBR.onReady(async () => {
         const items = await OBR.scene.items.getItems(selection);
         for (const item of items) {
             if (item.metadata?.[meta_id]?.item_height) {
-                let item_height = item.metadata[meta_id].item_height
-                if (item_height) {
-                    current_height = item.metadata[meta_id].item_height
+                let this_height = item.metadata[meta_id].item_height
+                if (this_height) {
+                    current_height = this_height
                 }
             }
         }
@@ -44,67 +51,105 @@ OBR.onReady(async () => {
     reset.addEventListener("click", debounced_set_height);
 
     async function set_height(event) {
-        console.log(event.keyIdentifier)
         if (event.keyIdentifier=='U+000A' || event.keyIdentifier=='Enter') {
             if (event.target.nodeName=='input') {
                 event.preventDefault();
                 return false;
             }
         } 
-        let item_height = parseInt(event.target.value);
+
+        let new_height = parseInt(event.target.value);
+        if (!new_height || isNaN(new_height)) {
+            new_height = 0
+        }
         
         const dpi = await OBR.scene.grid.getDpi()
         const scale = await OBR.scene.grid.getScale()
         
-        OBR.scene.items.updateItems(selection, (items) => {
-            
-            for (let item of items) {
-                if (item_height && !isNaN(item_height)) {
-                    const dpiScale = dpi / item.grid.dpi;
-                    const height = item.image.height * dpiScale * item.scale.y;
-                    const offsetY = (item.grid.offset.y / item.image.height) * height;
-
-                    // Apply image offset and offset position to be centered just above the token label
-                    const position = {
-                        x: item.position.x,
-                        y: item.position.y + offsetY - 60,
-                    };
-
-                    const image = buildImage(
-                        {
-                            height: 40,
-                            width: 40,
-                            url: `https://owlbear-distances.onrender.com/wing.png`,
-                            mime: "image/png",
-                        },
-                        { 
-                            dpi: 40, 
-                            offset: { x: 20, y: 20 } 
-                        }
-                    )
-                    .name("Height")
-                    .position(position)
-                    .layer("ATTACHMENT")
-                    .scale({x: 0.3, y: .3})
-                    .plainText(`${item_height} ${scale.parsed.unit}.`)
-                    .locked(true)
-                    .attachedTo(item.id)
-                    .disableAttachmentBehavior(["ROTATION"])
-                    .id(`${meta_id}/${item.id}`)
-                    .visible(item.visible)
-                    .build()
-                    OBR.scene.items.addItems([image]);
-                } else {
-                    const ids = selection.map((item) => `${meta_id}/${item}`);
-                    console.log(ids)
-                    OBR.scene.items.deleteItems(ids);
-                    item_height = 0
-                }
-                item.metadata[`${meta_id}`] = {
-                    item_height: item_height,
-                };
-            }
+        const items = await OBR.scene.items.getItems(selection);
+        const allHeightIcons = await OBR.scene.items.getItems((item) => {
+            const old_id = item.id.startsWith(`${meta_id}/`)
+            const metadata = item.metadata[meta_id]
+            return old_id || metadata
         });
+        
+        const toDelete = [];
+        const toSetLabel = [];
+        const toAdd = []
+        const toUpdate = [];
+
+        for (const item of items) {
+            const attachedHeight = allHeightIcons.filter((icon) => icon.attachedTo === item.id);
+            if (new_height == 0) {
+                toDelete.push(...attachedHeight.map((icon) => icon.id));
+                new_height = 0
+            } else if (attachedHeight.length == 1) {
+                toSetLabel.push(attachedHeight[0].id);
+            } else {
+                const dpiScale = dpi / item.grid.dpi;
+                const height = item.image.height * dpiScale * item.scale.y;
+                const offsetY = (item.grid.offset.y / item.image.height) * height;
+
+                // Apply image offset and offset position to be centered just above the token label
+                const position = {
+                    x: item.position.x,
+                    y: item.position.y + offsetY - 60,
+                };
+
+                const image = buildImage(
+                    {
+                        height: 40,
+                        width: 40,
+                        url: `https://owlbear-distances.onrender.com/wing.png`,
+                        mime: "image/png",
+                    },
+                    { 
+                        dpi: 40, offset: { x: 20, y: 20 } 
+                    }
+                )
+                .name("Height")
+                .position(position)
+                .layer("ATTACHMENT")
+                .scale({x: 0.3, y: .3})
+                .plainText(`${new_height} ${scale.parsed.unit}.`)
+                .locked(true)
+                .attachedTo(item.id)
+                .disableAttachmentBehavior(["ROTATION"])
+                .metadata({ [meta_id]: { enabled: true } })
+                .visible(item.visible)
+                .build()
+                toAdd.push(image);
+                
+            }
+
+            if (item.metadata?.[meta_id]?.["item_height"] != new_height) {
+                toUpdate.push(item.id);
+            }
+        }
+
+        // Remove, update, and add items as necessary
+        if (toDelete.length) {
+            await OBR.scene.items.deleteItems(toDelete);
+        }
+        if (toSetLabel.length) {
+            await OBR.scene.items.updateItems(toSetLabel, (items) => {
+                for (const item of items) {
+                    item.text.plainText = `${new_height} ${scale.parsed.unit}.`
+                }
+            });
+        }
+        if (toUpdate.length) {
+            await OBR.scene.items.updateItems(toUpdate, (items) => {
+                for (const item of items){
+                    item.metadata[`${meta_id}`] = {
+                        item_height: new_height,
+                    };
+                }
+            });
+        }
+        if (toAdd.length) {
+            await OBR.scene.items.addItems(toAdd);
+        }
         
     };
 

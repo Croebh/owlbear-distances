@@ -1,12 +1,20 @@
 import OBR from "@owlbear-rodeo/sdk";
 import { setupContextMenu } from "./contextMenu";
 import { setupList } from "./mainList"
-import { getExtensionId } from "./utils";
+import { getExtensionId, setThemeMode } from "./utils";
 import "./style.css";
+
 
 document.querySelector("#app").innerHTML = `<h3 style='text-align: center'>No character selected</h3>`;
 
-OBR.onReady(() => {
+OBR.onReady(async () => {
+  const theme = await OBR.theme.getTheme();
+  setThemeMode(theme, document);
+  OBR.theme.onChange((theme) =>
+  {
+      setThemeMode(theme, document);
+  });
+
   setupContextMenu();
   setupList(document.querySelector("#app"))
   
