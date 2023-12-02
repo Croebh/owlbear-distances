@@ -4,6 +4,9 @@ export function getExtensionId(module) {
     return `com.show-distances/${module}`
 }
 
+/* 
+ * @param {Image} item - The item to get the name of
+ */
 export function nameDisplay(item, sceneMetadata) {
     let name = item.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
 
@@ -17,10 +20,22 @@ export function nameDisplay(item, sceneMetadata) {
     if (name) {
         name = `<strong>${name}</strong>`
     } else {
-        name = `<strong><em>Unnamed Token</em></strong>`
+        name = `<strong><em>Unnamed ${toTitleCase(item.layer)}</em></strong>`
+    }
+    if (item.layer == "MOUNT") {
+        name = `🐎 ${name}`
     }
     return name
 }
+
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
 
 export function debounce(func, delay) {
     let timeoutId;
@@ -84,7 +99,7 @@ export async function getDistances(target) {
     const sceneMetadata = await OBR.scene.getMetadata();
 
     const characters = await OBR.scene.items.getItems(
-        (item) => item.layer === "CHARACTER" && isImage(item) && (is_dm || item.visible)
+        (item) => (["CHARACTER", "MOUNT"].includes(item.layer) && isImage(item) && (is_dm || item.visible))
     );
 
 

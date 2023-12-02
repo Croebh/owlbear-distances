@@ -13,7 +13,7 @@ export async function setupList(element) {
             last_selection = selection
             const items = await OBR.scene.items.getItems(selection);
             for (const item of items) {
-                if (item.layer != "CHARACTER" || !isImage(item) || (!is_dm && !item.visible)) {
+                if (!["CHARACTER", "MOUNT"].includes(item.layer) || !isImage(item) || (!is_dm && !item.visible)) {
                     continue
                 }
                 const name = nameDisplay(item, sceneMetadata)

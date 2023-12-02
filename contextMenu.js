@@ -4,15 +4,17 @@ import { getExtensionId } from "./utils";
 const menu_id = getExtensionId("menu")
 
 export function setupContextMenu() {
+  const filter = {
+    every: [{ key: "layer", value: "CHARACTER", coordinator: "||" },
+            { key: "layer", value: "MOUNT" }],
+  };
   OBR.contextMenu.create({
     id: `${menu_id}/context-menu.height`,
     icons: [
       {
         icon: "/wing.svg",
         label: "Set Height",
-        filter: {
-          every: [{ key: "layer", value: "CHARACTER" }],
-        },
+        filter: filter,
       },
     ],
     embed: {
@@ -26,9 +28,7 @@ export function setupContextMenu() {
       {
         icon: "/distances.svg",
         label: "Distances",
-        filter: {
-          every: [{ key: "layer", value: "CHARACTER" }],
-        },
+        filter: filter,
       },
     ],
     embed: {
