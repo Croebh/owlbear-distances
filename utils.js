@@ -23,7 +23,7 @@ export function nameDisplay(item, sceneMetadata) {
         name = `<strong><em>Unnamed ${toTitleCase(item.layer)}</em></strong>`
     }
     if (item.layer == "MOUNT") {
-        name = `🐎 ${name}`
+        name = `<span class="mount-icon">🐎</span> ${name}`
     }
     return name
 }
