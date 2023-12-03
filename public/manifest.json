@@ -10,5 +10,6 @@
       "width": 300
     },
     "icon": "/logo.png",
+    "author": "Croebh",
     "description": "Lets you see the distances to other characters, as well as being able to set the height of a character."
   }
