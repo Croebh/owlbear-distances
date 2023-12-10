@@ -10,6 +10,10 @@ export function getExtensionId(module) {
 export function nameDisplay(item, sceneMetadata) {
     let name = item.text.plainText.replace(/(\r\n|\n|\r)/gm, "");
 
+    if (!name && item.text.richText) {
+        name = item.text.richText[0].children[0].text.replace(/(\r\n|\n|\r)/gm, "");
+    }
+
     // Add support for Stat Bubbles nametags
     if (sceneMetadata?.[getExtensionId("useFileName")]) {
         name = `${item.name}${name ? ` (${name})` : ""}`
