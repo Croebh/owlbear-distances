@@ -51,6 +51,6 @@ function modalOpener() {
     url: "/modal.html",
     height: 500,
     width: 500,
-    fullScreen: navigator.userAgentData.mobile
+    fullScreen: navigator.userAgentData?.mobile ?? false
   })
 }
