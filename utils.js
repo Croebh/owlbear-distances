@@ -1,4 +1,39 @@
-import OBR, { isImage } from "@owlbear-rodeo/sdk";
+import OBR, { isImage, Math2, buildRuler } from "@owlbear-rodeo/sdk";
+
+export async function handleItemFocus(selection, target) {
+    const focusedIds = [target, selection];
+
+    // Convert the center of the selected item to screen-space
+    const bounds = await OBR.scene.items.getItemBounds(focusedIds);
+    const boundsAbsoluteCenter = await OBR.viewport.transformPoint(
+      bounds.center
+    );
+
+    // Get the center of the viewport in screen-space
+    const viewportWidth = await OBR.viewport.getWidth();
+    const viewportHeight = await OBR.viewport.getHeight();
+    const viewportCenter = {
+      x: viewportWidth / 2,
+      y: viewportHeight / 2,
+    };
+
+    // Offset the item center by the viewport center
+    const absoluteCenter = Math2.subtract(boundsAbsoluteCenter, viewportCenter);
+
+    // Convert the center to world-space
+    const relativeCenter = await OBR.viewport.inverseTransformPoint(
+      absoluteCenter
+    );
+
+    // Invert and scale the world-space position to match a viewport position offset
+    const viewportScale = await OBR.viewport.getScale();
+    const viewportPosition = Math2.multiply(relativeCenter, -viewportScale);
+
+    await OBR.viewport.animateTo({
+      scale: viewportScale,
+      position: viewportPosition,
+    });
+  }
 
 export function getExtensionId(module) {
     return `com.show-distances/${module}`
@@ -118,11 +153,7 @@ export async function getDistances(target) {
         y: Math.floor(target.position.y/dpi + ((item_scale-1)/2))
     }
 
-    let table = `
-    <colgroup>
-        <col width="100%" />
-        <col width="0%" />
-    </colgroup>`
+    let table_rows = []
     let distances = []
 
     for (const character of characters) {
@@ -138,7 +169,7 @@ export async function getDistances(target) {
             if (!character.visible) {
                 name = `<span class='invisible'>${name}</span>`
             }
-            
+            let distance = 0
             if (gridType.includes("HEX")) {
                 // Hex grid - Use center hexes
                 let hex_distance = await OBR.scene.grid.getDistance(character.position, target.position)
@@ -149,11 +180,7 @@ export async function getDistances(target) {
                 }
                 hex_distance *= scale.parsed.multiplier
                 hex_distance = Math.round(hex_distance * 10 ** scale.parsed.digits) / 10 ** scale.parsed.digits
-                distances.push({
-                    target: name,
-                    distance: hex_distance,
-                    height: height_difference,
-                })
+                distance = hex_distance
             } else {
                 // Square grid - Find closest square
                 let character_scale = Math.max(1, Math.floor(character.scale.x))
@@ -180,22 +207,44 @@ export async function getDistances(target) {
                         }
                     }
                 }
-                distances.push({
-                    target: name,
-                    distance: closestDistance,
-                    height: height_difference,
-                })
+                distance = closestDistance
             }
-
-            
+            distances.push({
+                target: name,
+                distance: distance,
+                height: height_difference,
+                id: character.id,
+            })            
         }
     };
     distances.sort((a, b) => {
-        return a.distance - b.distance
-    }).forEach(dist => {
-        table += `<tr><td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away ${dist.height ? (dist.height > 0 ? '↑' : '↓') : ''}</td></tr>`
+            return a.distance - b.distance
+    }).forEach((dist, i) => {
+        let row = document.createElement('tr')
+        row.innerHTML = `<td>${dist.target}</td><td>${dist.distance} ${scale.parsed.unit}. away ${dist.height ? (dist.height > 0 ? '↑' : '↓') : ''}</td>`
+        row.ondblclick = async () => {
+            let end_target = await OBR.scene.items.getItems([dist.id])
+            if (end_target.length == 0) {
+                return
+            }
+            end_target = end_target[0]
+            handleItemFocus(target.id, dist.id)
+            let ruler = buildRuler()
+            .measurement(`${dist.distance} ${scale.parsed.unit}.`)
+            .variant("DASHED")
+            .startPosition(target.position)
+            .endPosition(end_target.position)
+            .id(`distance-ruler-${target.id}-${end_target.id}`)
+            .visible(target.visible && end_target.visible)
+            .build();
+            OBR.scene.items.addItems([ruler]);
+            setTimeout(() => {
+                OBR.scene.items.deleteItems([ruler.id]);
+            }, 5000)
+        }
+        table_rows.push(row)
     })
-    return table
+    return table_rows
 }
 
 export function calcDistance(coord1, coord2, measurement, scale, height_difference, vertical_measurement) {

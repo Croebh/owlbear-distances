@@ -24,8 +24,11 @@ export async function setupList(element) {
                 nodes.push(node)
     
                 const table = document.createElement("table");
+                table.innerHTML = `<colgroup><col width="100%" /><col width="0%" /></colgroup>`
                 let distances = await getDistances(item)
-                table.innerHTML = distances
+                distances.forEach((distance) => {
+                    table.appendChild(distance)
+                })
                 nodes.push(table)
             }
             element.replaceChildren(...nodes);

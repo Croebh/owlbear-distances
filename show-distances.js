@@ -14,8 +14,11 @@ OBR.onReady(async () => {
         const items = await OBR.scene.items.getItems(selection);
         for (const item of items) {
             const table = document.createElement("table");
+            table.innerHTML = `<colgroup><col width="100%" /><col width="0%" /></colgroup>`
             let distances = await getDistances(item)
-            table.innerHTML = distances
+            distances.forEach((distance) => {
+                table.appendChild(distance)
+            })
             document.querySelector("#app").replaceChildren(table)
         }
     }
