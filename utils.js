@@ -148,6 +148,8 @@ export async function getDistances(target) {
     }
     
     let item_scale = Math.max(1, Math.floor(target.scale.x))
+    item_scale *= (target.image.width / target.grid.dpi)
+
     let item_bottom_right = {
         x: Math.floor(target.position.x/dpi + ((item_scale-1)/2)),
         y: Math.floor(target.position.y/dpi + ((item_scale-1)/2))
@@ -184,6 +186,8 @@ export async function getDistances(target) {
             } else {
                 // Square grid - Find closest square
                 let character_scale = Math.max(1, Math.floor(character.scale.x))
+                character_scale *= (character.image.width / character.grid.dpi)
+                
                 let character_bottom_right = {
                     x: Math.floor(character.position.x/dpi + ((character_scale-1)/2)),
                     y: Math.floor(character.position.y/dpi + ((character_scale-1)/2))
