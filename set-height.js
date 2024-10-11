@@ -98,19 +98,19 @@ OBR.onReady(async () => {
 
                 const image = buildImage(
                     {
-                        height: 40,
-                        width: 40,
+                        height: 256,
+                        width: 256,
                         url: `https://owlbear-distances.onrender.com/wing.png`,
                         mime: "image/png",
                     },
                     { 
-                        dpi: 40, offset: { x: 20, y: 20 } 
+                        dpi: 256, offset: { x: 128, y: 192 } 
                     }
                 )
                 .name("Height")
                 .position(position)
                 .layer("ATTACHMENT")
-                .scale({x: 0.3, y: .3})
+                .scale({x: 0.3, y: 0.3})
                 .plainText(`${new_height} ${scale.parsed.unit}.`)
                 .locked(true)
                 .attachedTo(item.id)
